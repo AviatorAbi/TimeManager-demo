@@ -20,7 +20,12 @@ def main():
     num_tasks = st.number_input("任务数量", min_value=1, value=1)
 
     for i in range(num_tasks):
-        st.markdown(f"### 任务 {i + 1}")
+        # 使用 HTML/CSS 为任务板块增加背景颜色和框架
+        st.markdown(f"""
+            <div style="background-color: #f0f8ff; padding: 10px; border-radius: 5px; margin-bottom: 10px;">
+                <h3>任务 {i + 1}</h3>
+        """, unsafe_allow_html=True)
+
         task_name = st.text_input(f"任务{i + 1}名称", key=f"task_{i}")
 
         if detailed_mode:
@@ -31,7 +36,12 @@ def main():
                                         key=f"steps_{i}")
 
             for j in range(num_steps):
-                st.markdown(f"##### 步骤 {j + 1}")
+                # 使用 HTML/CSS 为步骤增加层级感
+                st.markdown(f"""
+                    <div style="background-color: #e6f7ff; padding: 5px; border-radius: 5px; margin-left: 20px; margin-bottom: 5px;">
+                        <h5>步骤 {j + 1}</h5>
+                """, unsafe_allow_html=True)
+
                 col1, col2, col3 = st.columns(3)
 
                 with col1:
@@ -50,10 +60,15 @@ def main():
 
                 steps.append(Step(step_name, duration, needs_focus))
 
+                st.markdown("</div>", unsafe_allow_html=True)
+
             tasks.append(Task(task_name, steps))
         else:
-            # 简单模式下只输入任务名称
-            tasks.append(Task(task_name, []))
+            # 简单模式下为每个任务添加一个默认步骤
+            default_step = Step(name="默认步骤", duration=10, needs_focus=False)
+            tasks.append(Task(task_name, [default_step]))
+
+        st.markdown("</div>", unsafe_allow_html=True)
 
     if st.button("生成时间安排"):
         scheduler = TaskScheduler()
